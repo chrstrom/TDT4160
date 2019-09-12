@@ -16,12 +16,12 @@ Start:
 Loop:
 	LDR R5, [R2]		// Poll PB0
 	AND R5, R5, R4		// Filters out any input that is not pin 9 (PB0 state)
-	CMP R5, R4			// R5 contains the data from PB0, compare it to R4
-	BEQ On				// If equal (PB0 is pressed) we jump to turn on the lamp, otherwise, turn off
+	CMP R5, R4		// R5 contains the data from PB0, compare it to R4
+	BEQ On			// If equal (PB0 is pressed) we jump to turn on the lamp, otherwise, turn off
 Off:
 	STR R3, [R0]		// [R0] is the memory address for GPIO->PORT_E->DOUTSET
 	B Loop
-On:						// To turn the lamp on, we set
+On:				
 	STR R3, [R1]		// [R1] is the memory address for GPIO->PORT_E->DOUTCLR
 	B Loop
 NOP // Keep at the end of the file
