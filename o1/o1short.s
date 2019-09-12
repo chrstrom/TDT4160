@@ -15,8 +15,8 @@ Loop:
 	LDR R3, [R0] 				// Polling PB0
 	LSR R3, R3, #7				// BUTTON_PIN - LED_PIN = 7
 	AND R3, R3, #7				// Mask to clean up R3
-	STR R3, [R1]				// Set DOUTSET
+	STR R3, [R1]				// Set DOUTCLR
 	MVN R3, R3
-	STR R3, [R2]				// Set DOUTCLR
+	STR R3, [R2]				// Set DOUTSET
 	B Loop					// Loop without breakout condition
 NOP
