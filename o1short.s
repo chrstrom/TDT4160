@@ -18,5 +18,5 @@ Loop:
 	STR R3, [R1]				// Set DOUTSET
 	MVN R3, R3
 	STR R3, [R2]				// Set DOUTCLR
-	B Loop						// Loop without breakout condition
+	B Loop					// Loop without breakout condition
 NOP
