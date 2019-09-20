@@ -30,7 +30,7 @@
 #define S_IN_MIN 60
 
 // GLOBALS
-gpio_t* GPIO = (gpio_t*) GPIO_BASE;					// Because gpio and systick are used as bases for memory maps, it makes sense for these to be global
+gpio_t* GPIO = (gpio_t*) GPIO_BASE;					
 systick_t* SYSTICK = (systick_t*) SYSTICK_BASE;
 
 	// CLOCK
