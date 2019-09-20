@@ -1,8 +1,8 @@
 // GPIO base-adresse
 GPIO_BASE = 0x40006000
 
-// --- [Offset til GPIO-registrene]----------------------------------------- //
-    // --- [Offset til portregistrene ] ------------------------------- //
+//Offset til GPIO-registrene
+    // Offset til portregistrene
         GPIO_PORT_CTRL     =  0     // Port Control Register
         GPIO_PORT_MODEL    =  4     // Port Pin Mode Low Register
         GPIO_PORT_MODEH    =  8     // Port Pin Mode High Register
@@ -12,7 +12,6 @@ GPIO_BASE = 0x40006000
         GPIO_PORT_DOUTTGL  =  24    // Port Data Out Toggle Register
         GPIO_PORT_DIN      =  28    // Port Data In Register
         GPIO_PORT_PINLOCKN =  32    // Port Unlocked Pins Register
-    // ---------------------------------------------------------------- //
     
     GPIO_EXTIPSELL  =  256  // External Interrupt Port Select Low Register
     GPIO_EXTIPSELH  =  260  // External Interrupt Port Select High Register
@@ -31,9 +30,8 @@ GPIO_BASE = 0x40006000
     GPIO_EM4WUEN    =  308  // EM4 Wake-up Enable Register 
     GPIO_EM4WUPOL   =  312  // EM4 Wake-up Polarity Register 
     GPIO_EM4WUCAUSE =  316  // EM4 Wake-up Cause Register 
-// ------------------------------------------------------------------------- //
 
-// --- [Hjelpekonstanter til GPIO]------------------------------------------ //
+// Hjelpekonstanter til GPIO
     // Porter
     PORT_A          = 0
     PORT_B          = 1
@@ -50,4 +48,3 @@ GPIO_BASE = 0x40006000
     LED_PIN         = 2
     BUTTON_PORT     = PORT_B
     BUTTON_PIN      = 9
-// ------------------------------------------------------------------------- //
