@@ -20,13 +20,12 @@ void int_to_string(char *timestamp, unsigned int offset, int i);
 void time_to_string(char *timestamp, int h, int m, int s);
 
 // Prototyper
-// legg prototyper for dine funksjoner her¨
+// legg prototyper for dine funksjoner herÂ¨
 void init_clock(void);
 void display_time(int seconds);
 void decrement_time(void);
 void start_clock(void);
 void stop_clock(void);
-
 
 void set_bits(volatile word* w, int pin, int fl);
 void set_pin(volatile word* w, int pin, int s);
