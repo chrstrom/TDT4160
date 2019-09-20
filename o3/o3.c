@@ -7,6 +7,7 @@
 #define EXTIFALL_Msk 0b0001
 
 // PORTS
+// Alternatively you can use the port_pin_t struct for this
 #define LED0_PORT GPIO_PORT_E
 #define LED1_PORT GPIO_PORT_E
 
@@ -78,20 +79,19 @@ void time_to_string(char *timestamp, int h, int m, int s) {
 
 // set four bits in a selected memory location given by w
 void set_bits(volatile word* w, int pin, int fl){
-	// This is identical to the first part of o2.s GPIO setup. Refer to that if this doesn't make sense
-	pin *= 4;						// Mutliply by 4 because we bitshift by "pin" and we are setting 4 bits
+	pin *= 4;	// Mutliply by 4 to get the correct leftshift, because each "pin" is a 4 bit wide slot in memory
 	*w &= ~ (0b1111 << pin);
 	*w |= (fl << pin);
 }
 
-// Set single bit at pin location to s (s should either be 1 or 0)
+// Set single bit at pin location to s (s can either be 1 or 0)
 void set_pin(volatile word* w, int pin, int s){
 	if(s == 0 || s == 1){
 		*w |= s << pin;
 	}
 }
 
-// Convert input of seconds into HH:MM:SS and display
+// Convert seconds -> HH:MM:SS and display
 void display_time(int sec){
 	int h = sec / S_IN_HR;
 	int m = (sec / S_IN_MIN) % 60;
@@ -106,14 +106,13 @@ void start_clock(void){
 }
 
 void stop_clock(void){
-	SYSTICK->CTRL &= ~SysTick_CTRL_ENABLE_Msk;				// Disable SysTick from sending interrupts
+	SYSTICK->CTRL &= ~SysTick_CTRL_ENABLE_Msk;		// Disable SysTick from sending interrupts
 	clock_state = ALARM;
 	set_pin(&GPIO->ports[LED0_PORT].DOUTTGL, LED0_PIN, 1);	// Turning on LED0 is our way of showing that the alarm went off
 }
 
 /************* INTERRUPT HANDLERS *************/
 void GPIO_ODD_IRQHandler(void){
-	// In case SEC, MIN and HR, we increment the total_sec variable with its corresponding case value (in seconds)
 	switch(clock_state){
 	case SEC:
 		total_sec++;
@@ -139,7 +138,6 @@ void GPIO_ODD_IRQHandler(void){
 }
 
 void GPIO_EVEN_IRQHandler(void){
-	// The purpose of PB1 is mainly to switch states unless the clock is ticking
 	switch(clock_state){
 	case SEC:
 		clock_state = MIN;
@@ -162,7 +160,7 @@ void GPIO_EVEN_IRQHandler(void){
 	default:
 		set_pin(&GPIO->ports[LED1_PORT].DOUTTGL, LED1_PIN, 1);		// Turn on LED1 if something has gone wrong (we should never get to this point of the code)
 	}
-
+	
 	set_pin(&GPIO->IFC, PB1_PIN, 1);			// Reset IFC (interrupt handled)
 }
 
@@ -170,10 +168,7 @@ void GPIO_EVEN_IRQHandler(void){
 void SysTick_Handler(void){
 	total_sec--;
 	display_time(total_sec);
-
-	if(!total_sec){
-		stop_clock();
-	}
+	if(!total_sec) { stop_clock(); }
 }
 
 /*********** SETUP FOR GPIO/SysTick **********/
@@ -185,33 +180,27 @@ void init_clock(void){
 	set_bits(&GPIO->ports[PB0_PORT].MODEH, PB0_PIN-8, GPIO_MODE_INPUT);
 	set_bits(&GPIO->ports[PB1_PORT].MODEH, PB1_PIN-8, GPIO_MODE_INPUT);
 
-	// Set pin09 (PB0) and pin10 (PB1) to 0001 in EXTIPSELH
+	// Set pin09 and pin01 -> 0b0001 in EXTIPSELH
 	// Same thing here, we are in EXTIPSHELH (8-15), while pin # is relative to EXTIPSEL (0-15)
 	set_bits(&GPIO->EXTIPSHELH, PB0_PIN-8, EXTIPSEL_Msk);
 	set_bits(&GPIO->EXTIPSHELH, PB1_PIN-8, EXTIPSEL_Msk);
 
-	// Setting EXTIFALL (External interrupt falling edge trigger)
-	// Set to go high on falling edge, because PB0/PB1 are active low
+	// Set EXTIFALL (External interrupt falling edge trigger)
 	set_pin(&GPIO->EXTIFALL, PB0_PIN, 1);
 	set_pin(&GPIO->EXTIFALL, PB1_PIN, 1);
 
-	// Setting IF (Interrupt flag) to 0 on startup
+	// Set IF (Interrupt flag) to 0 on startup
 	set_pin(&GPIO->IF, PB0_PIN, 0);
 	set_pin(&GPIO->IF, PB1_PIN, 0);
 
-	// Setting IEN (Interrupt enable)
+	// Set IEN (Interrupt enable)
 	set_pin(&GPIO->IEN, PB0_PIN, 1);
 	set_pin(&GPIO->IEN, PB1_PIN, 1);
 
 	// Setup for SysTick
-	// Set  CTRL (Control and status register)(TICKINT, CLKSOURCE,ENABLE) -> (1, 1, 0)
-	SYSTICK->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk;
-
-	// Set LOAD (Reload value register): The systick interrupt will now generate one signal per second
-	SYSTICK->LOAD = FREQUENCY;
-
-	// Set VAL (Current value register)
-	SYSTICK->VAL = 0;
+	SYSTICK->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk;	//(TICKINT, CLKSOURCE,ENABLE) -> (1, 1, 0)
+	SYSTICK->LOAD = FREQUENCY;						// The systick interrupt will now generate one signal per second
+	SYSTICK->VAL = 0;							// VAL can either be 0 or LOAD
 
 	// Show initial value for total_sec on startup. Should be 0
 	display_time(total_sec);
