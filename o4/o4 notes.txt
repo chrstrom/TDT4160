@@ -1,0 +1,28 @@
+Assembly program:
+
+0x00 ldi %r2, 1
+0x04 ldi %r1, 1
+0x08 mul %r2, %r2, %r0
+0x0C sub %r0, %r0, %r1
+0x10 cmp %r3, %r0, %r1
+0x14 jgt %r3, -16
+
+Example: the assembly instruction add %r7, %r8, %r9 translates to 00001001110100001001XXXXXXXXXXXX
+add = 00001
+cmp = 00011
+jgt = 00100
+ldi = 00000
+mul = 00010
+sub = 00101
+
+register N translates to N (in binary)
+
+This results in the following:
+0x00 00000 00010 00000 00000 00000 00000 01
+0x04 00000 00001 00000 00000 00000 00000 01
+0x08 00010 00010 00010 00000 XXXXX XXXXX XX
+0x0C 00101 00000 00000 00001 XXXXX XXXXX XX
+0x10 00011 00011 00000 00001 XXXXX XXXXX XX
+0x14 00100 00011 11111 11111 11111 11100 00
+
+Note: -16 = ~16 + 1 = ~10000 + 00001 = 10000 (Add as many 1's as needed to the left of MSB)
