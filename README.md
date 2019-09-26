@@ -1,8 +1,9 @@
 # TDT4160
 Assignments (Øvinger) for TDT4160 - Datamaskiner og digitalteknikk (H2019)
 All project files will be tested on the EMF32GG-STK3700 and turned in on http://kdd2.idi.ntnu.no/.
-I won't upload anything here that does not work on both of these platforms.
-Projects will be written with Simplicity Studio, though I will only upload the source files here, so make sure
-you have all the appropriate files to build properly.
+Although the assignment instructions say to use Simplicity Studio, I would highly reccoment using PIO in VS Code
+to make things easier in the long run. If you run into problems building the project with PIO, you can import
+the files in a Simplicity project, and things should work without any issues. Refer to the Kompendium if any
+problems arise.
 
 God kok :)
