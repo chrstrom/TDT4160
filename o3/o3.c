@@ -78,21 +78,21 @@ void time_to_string(char *timestamp, int h, int m, int s) {
 }
 
 // set four bits in a selected memory location given by w
-void set_bits(volatile word* w, int pin, int fl){
+void set_bits(volatile word* w, int pin, int fl) {
 	pin *= 4;	// Mutliply by 4 to get the correct leftshift, because each "pin" is a 4 bit wide slot in memory
 	*w &= ~ (0b1111 << pin);
 	*w |= (fl << pin);
 }
 
 // Set single bit at pin location to s (s can either be 1 or 0)
-void set_pin(volatile word* w, int pin, int s){
-	if(s == 0 || s == 1){
+void set_pin(volatile word* w, int pin, int s) {
+	if(s == 0 || s == 1) {
 		*w |= s << pin;
 	}
 }
 
 // Convert seconds -> HH:MM:SS and display
-void display_time(int sec){
+void display_time(int sec) {
 	int h = sec / S_IN_HR;
 	int m = (sec / S_IN_MIN) % 60;
 	int s = sec % 60;
@@ -101,18 +101,18 @@ void display_time(int sec){
 	lcd_write(time_str);
 }
 
-void start_clock(void){
+void start_clock(void) { 
 	SYSTICK->CTRL |= SysTick_CTRL_ENABLE_Msk;		// Enable SysTick to start sending interrupts
 }
 
-void stop_clock(void){
+void stop_clock(void) {
 	SYSTICK->CTRL &= ~SysTick_CTRL_ENABLE_Msk;		// Disable SysTick from sending interrupts
 	clock_state = ALARM;
 	set_pin(&GPIO->ports[LED0_PORT].DOUTTGL, LED0_PIN, 1);	// Turning on LED0 is our way of showing that the alarm went off
 }
 
 /************* INTERRUPT HANDLERS *************/
-void GPIO_ODD_IRQHandler(void){
+void GPIO_ODD_IRQHandler(void) {
 	switch(clock_state){
 	case SEC:
 		total_sec++;
@@ -137,7 +137,7 @@ void GPIO_ODD_IRQHandler(void){
 	set_pin(&GPIO->IFC, PB0_PIN, 1);			// Reset IFC (interrupt handled)
 }
 
-void GPIO_EVEN_IRQHandler(void){
+void GPIO_EVEN_IRQHandler(void) {
 	switch(clock_state){
 	case SEC:
 		clock_state = MIN;
@@ -165,14 +165,14 @@ void GPIO_EVEN_IRQHandler(void){
 }
 
 // Because SysTick sends an interrupt for every second, we can directly count down here
-void SysTick_Handler(void){
+void SysTick_Handler(void) { 
 	total_sec--;
 	display_time(total_sec);
 	if(!total_sec) { stop_clock(); }
 }
 
 /*********** SETUP FOR GPIO/SysTick **********/
-void init_clock(void){
+void init_clock(void) {
 	// Set inputs and outputs
 	// Subtract 8 from PB0 and PB1 because we are in MODEH (8-15)  pin # is relative to MODE (0-15)
 	set_bits(&GPIO->ports[LED0_PORT].MODEL, LED0_PIN, GPIO_MODE_OUTPUT);
