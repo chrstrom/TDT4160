@@ -1,4 +1,4 @@
-CAAE: Computer Architecture, Academic Exercises.
+
 
 Aka assignments for a class in computer architecture. 
 o1, o2 and o3 are programs written for the EFM32GG-STK3700 platform, and
